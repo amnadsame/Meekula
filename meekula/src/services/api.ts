@@ -46,7 +46,7 @@ axiosInstance.interceptors.request.use(async (config) => {
 axiosInstance.interceptors.response.use(
   (res) => {
     // res is full axios response here
-    const message = res?.data?.message ?? res?.message
+    const message = res?.data?.message ?? res?.data?.data?.message ?? res?.data?.result?.message
 
     if (message && message !== 'Success') {
       // skip some endpoints that web client excludes
