@@ -26,19 +26,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [])
 
   const login = async ({ email, password }: { email: string; password: string }) => {
-    const res = await appService.login({ email, password, language: 'en', type: 'APP' })
+    try {
+      const res = await appService.login({ email, password, language: 'en', type: 'APP' })
 
-    // API can return { data: { accessToken, refreshToken } } or { accessToken, refreshToken }
-    const payload = res?.data ?? res
-    const accessToken = payload?.accessToken ?? payload?.data?.accessToken
-    const refreshToken = payload?.refreshToken ?? payload?.data?.refreshToken
+      // API can return many shapes; normalize into payload
+      const payload = res?.data ?? res ?? {}
 
-    if (!accessToken) throw new Error('Missing access token from login response')
+      // Try common locations for tokens
+      const accessToken =
+        payload?.accessToken ??
+        payload?.token ??
+        payload?.access_token ??
+        payload?.data?.accessToken ??
+        payload?.result?.accessToken ??
+        payload?.result?.token
 
-    await AsyncStorage.setItem('accessToken', accessToken)
-    if (refreshToken) await AsyncStorage.setItem('refreshToken', refreshToken)
+      const refreshToken =
+        payload?.refreshToken ?? payload?.data?.refreshToken ?? payload?.result?.refreshToken
 
-    setIsAuthenticated(true)
+      if (!accessToken) {
+        console.error('Login response missing token', { payload })
+        throw new Error('Missing access token from login response')
+      }
+
+      await AsyncStorage.setItem('accessToken', accessToken)
+      if (refreshToken) await AsyncStorage.setItem('refreshToken', refreshToken)
+
+      setIsAuthenticated(true)
+    } catch (e) {
+      console.error('Auth.login error', e)
+      throw e
+    }
   }
 
   const logout = async () => {
