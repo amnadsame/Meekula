@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { Ionicons, FontAwesome } from '@expo/vector-icons'
 import { useAuth } from '../services/auth'
+import LoadingOverlay from '../components/LoadingOverlay'
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
@@ -19,7 +20,7 @@ export default function LoginScreen() {
   const [secure, setSecure] = useState(true)
   const [loading, setLoading] = useState(false)
 
-  const { login } = useAuth()
+  const { login, authProcessing } = useAuth()
 
   const handleLogin = async () => {
     try {
@@ -118,6 +119,8 @@ export default function LoginScreen() {
         Don’t have an account?{' '}
         <Text style={styles.signupLink}>Sign up now!</Text>
       </Text>
+
+      {authProcessing ? <LoadingOverlay /> : null}
     </SafeAreaView>
   )
 }
