@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Image, StyleSheet, TouchableOpacity, Platform, StatusBar } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import UserPanel from './UserPanel'
 
 const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0
 const BAR_HEIGHT = 60
 
 export default function Navbar() {
+  const [showPanel, setShowPanel] = useState(false)
+
   return (
     <View style={[styles.container, { paddingTop: STATUS_BAR_HEIGHT, height: BAR_HEIGHT + STATUS_BAR_HEIGHT }]}>
       {/* LEFT - Logo */}
@@ -25,12 +28,15 @@ export default function Navbar() {
           <Ionicons name="notifications-outline" size={22} color="#000" />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => setShowPanel(true)}>
           <Image
             source={require('../../assets/avatar.png')}
             style={styles.avatar}
           />
         </TouchableOpacity>
+
+        {/* user panel modal */}
+        {showPanel ? <UserPanel visible={showPanel} onClose={() => setShowPanel(false)} /> : null}
       </View>
     </View>
   )

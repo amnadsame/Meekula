@@ -6,8 +6,10 @@ type AuthContextType = {
   isAuthenticated: boolean
   loading: boolean
   authProcessing: boolean
+  userProfile?: any
   login: (payload: { email: string; password: string }) => Promise<void>
   logout: () => Promise<void>
+  refreshProfile: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -16,11 +18,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
   const [authProcessing, setAuthProcessing] = useState(false)
+  const [userProfile, setUserProfile] = useState<any>(undefined)
 
   useEffect(() => {
     const check = async () => {
       const token = await AsyncStorage.getItem('accessToken')
       setIsAuthenticated(!!token)
+
+      // try load cached profile
+      try {
+        const raw = await AsyncStorage.getItem('userProfile')
+        if (raw) setUserProfile(JSON.parse(raw))
+      } catch (e) {
+        console.warn('Failed to parse cached profile', e)
+      }
+
       setLoading(false)
     }
 
@@ -61,11 +73,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const profileRes = await appService.getUserProfile()
         const profile = profileRes?.data ?? profileRes ?? {}
         await AsyncStorage.setItem('userProfile', JSON.stringify(profile))
+        setUserProfile(profile)
       } catch (e) {
         console.warn('Failed to fetch profile after login', e)
       } finally {
         const elapsed = Date.now() - start
-        const MIN_MS = 5000 // minimum 10 seconds loading
+        const MIN_MS = 10000 // minimum 10 seconds loading
         if (elapsed < MIN_MS) {
           await new Promise((r) => setTimeout(r, MIN_MS - elapsed))
         }
@@ -82,11 +95,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     await AsyncStorage.removeItem('accessToken')
     await AsyncStorage.removeItem('refreshToken')
+    await AsyncStorage.removeItem('userProfile')
+    setUserProfile(undefined)
     setIsAuthenticated(false)
   }
 
+  const refreshProfile = async () => {
+    try {
+      const profileRes = await appService.getUserProfile()
+      const profile = profileRes?.data ?? profileRes ?? {}
+      await AsyncStorage.setItem('userProfile', JSON.stringify(profile))
+      setUserProfile(profile)
+    } catch (e) {
+      console.warn('Failed to refresh profile', e)
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading, authProcessing, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, loading, authProcessing, userProfile, login, logout, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   )
