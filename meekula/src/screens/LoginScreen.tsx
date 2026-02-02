@@ -11,8 +11,7 @@ import {
   Alert,
 } from 'react-native'
 import { Ionicons, FontAwesome } from '@expo/vector-icons'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { appService } from '../services/appService'
+import { useAuth } from '../services/auth'
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
@@ -20,23 +19,22 @@ export default function LoginScreen() {
   const [secure, setSecure] = useState(true)
   const [loading, setLoading] = useState(false)
 
+  const { login } = useAuth()
+
   const handleLogin = async () => {
     try {
       setLoading(true)
-      const { data } = await appService.login({
-        email,
-        password,
-        language: 'en',
-        type: 'APP',
-      })
-
-      // 🔥 lưu token
-      await AsyncStorage.setItem('accessToken', data.accessToken)
-
-      console.log('Login success', data)
+      await login({ email, password })
+      console.log('Login success')
     } catch (e: any) {
-      console.log('Login error', e.response?.data?.message ?? e.message)
-      Alert.alert('Login error', e.response?.data?.message ?? 'Unknown error')
+      const status = e.response?.status ?? e.response?.data?.statusCode ?? 'Unknown'
+      const url = e.config?.url ?? ''
+      const server = e.response?.data ?? {}
+
+      console.error('Login error detailed', { status, url, server, error: e })
+
+      const message = server?.message ?? JSON.stringify(server) ?? e.message
+      Alert.alert('Login error', `Status: ${status}\n${message}`)
     } finally {
       setLoading(false)
     }
