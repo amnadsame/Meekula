@@ -56,7 +56,7 @@ export default function UserPanel({ visible, onClose }: { visible: boolean; onCl
               </View>
             </View>
 
-            <View style={styles.menu}>
+            <View style={styles.menu} >
               <MenuRow icon="account-circle" labelKey={t('Tài khoản')} />
               <MenuRow icon="storefront" labelKey={ t('Doanh nghiệp')} />
               <MenuRow icon="arrow-up-bold-circle" labelKey={ t('Nâng cấp tài khoản')} />
@@ -66,12 +66,12 @@ export default function UserPanel({ visible, onClose }: { visible: boolean; onCl
               <MenuRow icon="cog-outline" labelKey={ t('Cài đặt')} />
 
               <TouchableOpacity style={styles.row} onPress={() => setShowLang(true)}>
-                <MaterialCommunityIcons name="translate" size={20} color="#333" />
+                <MaterialCommunityIcons name="translate" size={30} color="#333" />
                 <Text style={[styles.label, { marginLeft: 12 }]}>{t('Ngôn ngữ')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.logout} onPress={async () => { await logout(); onClose(); }}>
-                <MaterialCommunityIcons name="logout" size={20} color="#e74c3c" />
+                <MaterialCommunityIcons name="logout" size={30} color="#e74c3c" />
                 <Text style={[styles.label, { color: '#e74c3c', marginLeft: 12 }]}>{t('Đăng xuất')}</Text>
               </TouchableOpacity>
             </View>
@@ -90,7 +90,7 @@ function MenuRow({ icon, labelKey }: { icon: string; labelKey: string }) {
   const { t } = useTranslation()
   return (
     <TouchableOpacity style={styles.row} activeOpacity={0.7}>
-      <MaterialCommunityIcons name={icon as any} size={20} color="#333" />
+      <MaterialCommunityIcons name={icon as any} size={30} color="#333" />
       <Text style={styles.label}>{t(labelKey)}</Text>
     </TouchableOpacity>
   )
