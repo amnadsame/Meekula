@@ -1,6 +1,6 @@
 import React from 'react'
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import { changeLanguage, useTranslation } from '../utils/i18n'
+import { useTranslation } from '../utils/i18n'
 import { useAuth } from '../services/auth'
 import { appService } from '../services/appService'
 
@@ -12,10 +12,11 @@ const LANGS = [
 ]
 
 export default function LanguageSwitcher({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const { t } = useTranslation()
+  const { t, changeLanguage } = useTranslation()
   const { isAuthenticated, refreshProfile } = useAuth()
 
   const select = async (code: string) => {
+    // update local language
     changeLanguage(code)
     try {
       // update server side if user logged in

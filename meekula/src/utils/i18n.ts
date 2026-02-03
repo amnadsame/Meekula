@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const STORAGE_KEY = 'app_language'
 
-import resourcesRaw from '../i18n'
+import resourcesRaw from '../lang'
 
 // resources holds translations keyed by language code (en/vi/la/th)
 const resources: Record<string, Record<string, string>> = resourcesRaw as any

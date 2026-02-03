@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
+
 import {
   StyleSheet,
   Text,
@@ -24,7 +25,7 @@ export default function LoginScreen() {
   const [showLang, setShowLang] = useState(false)
 
   const { login, authProcessing } = useAuth()
-  const { lang } = useTranslation()
+  const { t, lang } = useTranslation()
   const flagMap: Record<string, string> = { en: '🇬🇧', vi: '🇻🇳', la: '🇱🇦', th: '🇹🇭' }
   const currentFlag = flagMap[lang()] ?? '🌐'
 
@@ -66,12 +67,12 @@ export default function LoginScreen() {
       {showLang ? <LanguageSwitcher visible={showLang} onClose={() => setShowLang(false)} /> : null }
 
       {/* TITLE */}
-      <Text style={styles.title}>{ ('Login to account') }</Text>
-      <Text style={styles.subtitle}>Welcome back! Please log in to continue.</Text>
+      <Text style={styles.title}>{t('Đăng nhập tài khoản')}</Text>
+      <Text style={styles.subtitle}>{t('Chào mừng bạn trở lại! Vui lòng đăng nhập để tiếp tục.')}</Text>
 
       {/* EMAIL */}
       <TextInput
-        placeholder="Email"
+        placeholder={t('Email')}
         value={email}
         onChangeText={setEmail}
         style={styles.input}
@@ -83,7 +84,7 @@ export default function LoginScreen() {
       {/* PASSWORD */}
       <View style={styles.passwordWrapper}>
         <TextInput
-          placeholder="Password"
+          placeholder={t('Mật khẩu')}
           secureTextEntry={secure}
           style={styles.passwordInput}
           placeholderTextColor="#888"
@@ -102,7 +103,7 @@ export default function LoginScreen() {
 
       {/* FORGOT */}
       <TouchableOpacity style={styles.forgot}>
-        <Text style={styles.forgotText}>Forgot password?</Text>
+        <Text style={styles.forgotText}>{ t('Quên mật khẩu?') }</Text>
       </TouchableOpacity>
 
       {/* LOGIN BUTTON */}
@@ -111,11 +112,11 @@ export default function LoginScreen() {
         onPress={handleLogin}
         disabled={loading || !email || !password}
       >
-        <Text style={styles.loginText}>{loading ? 'Đang xử lý...' : 'Login'}</Text>
+        <Text style={styles.loginText}>{loading ? t('Đang xử lý...') : t('Đăng nhập')}</Text>
       </TouchableOpacity>
 
       {/* SOCIAL */}
-      <Text style={styles.orText}>Or log in to your account with</Text>
+      <Text style={styles.orText}>{ t('Hoặc đăng nhập vào tài khoản của bạn bằng') }</Text>
 
       <View style={styles.socialRow}>
         <TouchableOpacity style={styles.socialBtn}>
@@ -129,8 +130,8 @@ export default function LoginScreen() {
 
       {/* SIGNUP */}
       <Text style={styles.signup}>
-        Don’t have an account?{' '}
-        <Text style={styles.signupLink}>Sign up now!</Text>
+        {t('Chưa có tài khoản?')}{' '}
+        <Text style={styles.signupLink}>{ t('Đăng ký ngay!') }</Text>
       </Text>
 
       {authProcessing ? <LoadingOverlay /> : null}

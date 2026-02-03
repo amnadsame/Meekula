@@ -57,22 +57,22 @@ export default function UserPanel({ visible, onClose }: { visible: boolean; onCl
             </View>
 
             <View style={styles.menu}>
-              <MenuRow icon="account-circle" labelKey="user.account" />
-              <MenuRow icon="storefront" labelKey="user.myBusiness" />
-              <MenuRow icon="arrow-up-bold-circle" labelKey="user.upgradeAccount" />
-              <MenuRow icon="bullhorn" labelKey="user.advertisement" />
-              <MenuRow icon="credit-card-outline" labelKey="user.topUpPoints" />
-              <MenuRow icon="information-outline" labelKey="user.infoWebsite" />
-              <MenuRow icon="cog-outline" labelKey="user.settings" />
+              <MenuRow icon="account-circle" labelKey={t('Tài khoản')} />
+              <MenuRow icon="storefront" labelKey={ t('Doanh nghiệp')} />
+              <MenuRow icon="arrow-up-bold-circle" labelKey={ t('Nâng cấp tài khoản')} />
+              <MenuRow icon="bullhorn" labelKey={ t('Quảng cáo')} />
+              <MenuRow icon="credit-card-outline" labelKey={ t('Nạp điểm')} />
+              <MenuRow icon="information-outline" labelKey={ t('Thông tin website')} />
+              <MenuRow icon="cog-outline" labelKey={ t('Cài đặt')} />
 
               <TouchableOpacity style={styles.row} onPress={() => setShowLang(true)}>
                 <MaterialCommunityIcons name="translate" size={20} color="#333" />
-                <Text style={[styles.label, { marginLeft: 12 }]}>{t('app.changeLanguage')}</Text>
+                <Text style={[styles.label, { marginLeft: 12 }]}>{t('Ngôn ngữ')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.logout} onPress={async () => { await logout(); onClose(); }}>
                 <MaterialCommunityIcons name="logout" size={20} color="#e74c3c" />
-                <Text style={[styles.label, { color: '#e74c3c', marginLeft: 12 }]}>{t('app.logout')}</Text>
+                <Text style={[styles.label, { color: '#e74c3c', marginLeft: 12 }]}>{t('Đăng xuất')}</Text>
               </TouchableOpacity>
             </View>
 
