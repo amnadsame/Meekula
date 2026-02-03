@@ -34,7 +34,7 @@ export default function LanguageSwitcher({ visible, onClose }: { visible: boolea
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.box}>
-          <Text style={styles.title}>{t('app.changeLanguage')}</Text>
+          <Text style={styles.title}>{t('Đổi ngôn ngữ')}</Text>
           {LANGS.map((l) => (
             <TouchableOpacity key={l.code} style={styles.row} onPress={() => select(l.code)}>
               <Text style={styles.flag}>{l.flag}</Text>
@@ -43,7 +43,7 @@ export default function LanguageSwitcher({ visible, onClose }: { visible: boolea
           ))}
 
           <TouchableOpacity style={styles.close} onPress={onClose}>
-            <Text style={{ color: '#39b54a' }}>Close</Text>
+            <Text style={{ color: '#39b54a' }}>{ t('Đóng') }</Text>
           </TouchableOpacity>
         </View>
       </View>
