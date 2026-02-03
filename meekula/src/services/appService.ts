@@ -61,8 +61,12 @@ export const appService = {
   getUserData: (data?: { accountId?: string }) =>
     axiosInstance.get('users/profile', { params: { accountId: data?.accountId } }),
 
-  getUserProfile: (data?: { accountId?: string }) =>
-    axiosInstance.get('users/user-profile', { params: { accountId: data?.accountId } }),
+  getUserProfile: async (data?: { accountId?: string }) => {
+    const params = { accountId: data?.accountId }
+      console.debug('[appService] requesting users/profile', params)
+      return await axiosInstance.get('users/profile', { params })
+  
+  },
 
   saveProfile: (data: { avatar?: any; fullName?: string; note?: string; phone?: string; address?: string; isDelAvatar?: boolean }) => {
     const formData = new FormData()
