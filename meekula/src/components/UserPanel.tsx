@@ -1,10 +1,38 @@
-import React from 'react'
-import { Modal, View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Modal, View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
 import { useAuth } from '../services/auth'
+import { useTranslation } from '../utils/i18n'
+import LanguageSwitcher from './LanguageSwitcher'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 export default function UserPanel({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const { userProfile, logout } = useAuth()
+  const { userProfile, logout, refreshProfile } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [showLang, setShowLang] = useState(false)
+
+  useEffect(() => {
+    let mounted = true
+    const ensure = async () => {
+      if (!visible) return
+      if (!userProfile) {
+        try {
+          setLoading(true)
+          await refreshProfile()
+        } catch (e) {
+          console.warn('Failed to refresh profile', e)
+        } finally {
+          if (mounted) setLoading(false)
+        }
+      }
+    }
+
+    ensure()
+    return () => {
+      mounted = false
+    }
+  }, [visible])
+
+  const { t } = useTranslation()
 
   const email = userProfile?.email ?? userProfile?.result?.userData?.email ?? userProfile?.result?.email
   const displayName = userProfile?.fullName ?? userProfile?.result?.userData?.fullName ?? email
@@ -29,19 +57,27 @@ export default function UserPanel({ visible, onClose }: { visible: boolean; onCl
             </View>
 
             <View style={styles.menu}>
-              <MenuRow icon="account-circle" label="Account" />
-              <MenuRow icon="storefront" label="My Business" />
-              <MenuRow icon="arrow-up-bold-circle" label="Upgrade account" />
-              <MenuRow icon="bullhorn" label="Advertisement" />
-              <MenuRow icon="credit-card-outline" label="Top up points" />
-              <MenuRow icon="information-outline" label="Information about the website" />
-              <MenuRow icon="cog-outline" label="Settings" />
+              <MenuRow icon="account-circle" labelKey="user.account" />
+              <MenuRow icon="storefront" labelKey="user.myBusiness" />
+              <MenuRow icon="arrow-up-bold-circle" labelKey="user.upgradeAccount" />
+              <MenuRow icon="bullhorn" labelKey="user.advertisement" />
+              <MenuRow icon="credit-card-outline" labelKey="user.topUpPoints" />
+              <MenuRow icon="information-outline" labelKey="user.infoWebsite" />
+              <MenuRow icon="cog-outline" labelKey="user.settings" />
+
+              <TouchableOpacity style={styles.row} onPress={() => setShowLang(true)}>
+                <MaterialCommunityIcons name="translate" size={20} color="#333" />
+                <Text style={[styles.label, { marginLeft: 12 }]}>{t('app.changeLanguage')}</Text>
+              </TouchableOpacity>
 
               <TouchableOpacity style={styles.logout} onPress={async () => { await logout(); onClose(); }}>
                 <MaterialCommunityIcons name="logout" size={20} color="#e74c3c" />
-                <Text style={[styles.label, { color: '#e74c3c', marginLeft: 12 }]}>Logout</Text>
+                <Text style={[styles.label, { color: '#e74c3c', marginLeft: 12 }]}>{t('app.logout')}</Text>
               </TouchableOpacity>
             </View>
+
+            {/* language modal */}
+            {showLang ? <LanguageSwitcher visible={showLang} onClose={() => setShowLang(false)} /> : null }
 
           </ScrollView>
         </View>
@@ -50,12 +86,13 @@ export default function UserPanel({ visible, onClose }: { visible: boolean; onCl
   )
 }
 
-function MenuRow({ icon, label }: { icon: string; label: string }) {
+function MenuRow({ icon, labelKey }: { icon: string; labelKey: string }) {
+  const { t } = useTranslation()
   return (
-    <View style={styles.row}>
+    <TouchableOpacity style={styles.row} activeOpacity={0.7}>
       <MaterialCommunityIcons name={icon as any} size={20} color="#333" />
-      <Text style={styles.label}>{label}</Text>
-    </View>
+      <Text style={styles.label}>{t(labelKey)}</Text>
+    </TouchableOpacity>
   )
 }
 

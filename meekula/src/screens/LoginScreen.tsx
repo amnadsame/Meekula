@@ -11,6 +11,8 @@ import {
   Alert,
 } from 'react-native'
 import { Ionicons, FontAwesome } from '@expo/vector-icons'
+import { useTranslation } from '../utils/i18n'
+import LanguageSwitcher from '../components/LanguageSwitcher'
 import { useAuth } from '../services/auth'
 import LoadingOverlay from '../components/LoadingOverlay'
 
@@ -19,8 +21,12 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('')
   const [secure, setSecure] = useState(true)
   const [loading, setLoading] = useState(false)
+  const [showLang, setShowLang] = useState(false)
 
   const { login, authProcessing } = useAuth()
+  const { lang } = useTranslation()
+  const flagMap: Record<string, string> = { en: '🇬🇧', vi: '🇻🇳', la: '🇱🇦', th: '🇹🇭' }
+  const currentFlag = flagMap[lang()] ?? '🌐'
 
   const handleLogin = async () => {
     try {
@@ -45,6 +51,11 @@ export default function LoginScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
 
+      {/* LANGUAGE SWITCH BUTTON */}
+      <TouchableOpacity style={styles.langBtn} onPress={() => setShowLang(true)}>
+        <Text style={styles.langText}>{currentFlag}</Text>
+      </TouchableOpacity>
+
       {/* LOGO */}
       <Image
         source={require('../../assets/meekula-logo.png')}
@@ -52,8 +63,10 @@ export default function LoginScreen() {
         resizeMode="contain"
       />
 
+      {showLang ? <LanguageSwitcher visible={showLang} onClose={() => setShowLang(false)} /> : null }
+
       {/* TITLE */}
-      <Text style={styles.title}>Login to account</Text>
+      <Text style={styles.title}>{ ('Login to account') }</Text>
       <Text style={styles.subtitle}>Welcome back! Please log in to continue.</Text>
 
       {/* EMAIL */}
@@ -139,6 +152,15 @@ const styles = StyleSheet.create({
     marginTop: 80,
     marginBottom: 20,
   },
+
+  langBtn: {
+    position: 'absolute',
+    right: 20,
+    top: 40,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  langText: { fontSize: 18 },
 
   title: {
     fontSize: 26,

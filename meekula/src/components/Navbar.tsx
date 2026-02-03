@@ -1,13 +1,19 @@
 import React, { useState } from 'react'
-import { View, Image, StyleSheet, TouchableOpacity, Platform, StatusBar } from 'react-native'
+import { View, Image, StyleSheet, TouchableOpacity, Platform, StatusBar, Text } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import UserPanel from './UserPanel'
+import LanguageSwitcher from './LanguageSwitcher'
+import { useTranslation } from '../utils/i18n'
 
 const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0
 const BAR_HEIGHT = 60
 
 export default function Navbar() {
   const [showPanel, setShowPanel] = useState(false)
+  const [showLang, setShowLang] = useState(false)
+  const { lang } = useTranslation()
+  const flagMap: Record<string, string> = { en: '🇬🇧', vi: '🇻🇳', la: '🇱🇦', th: '🇹🇭' }
+  const currentFlag = flagMap[lang()] ?? '🌐'
 
   return (
     <View style={[styles.container, { paddingTop: STATUS_BAR_HEIGHT, height: BAR_HEIGHT + STATUS_BAR_HEIGHT }]}>
@@ -20,6 +26,10 @@ export default function Navbar() {
 
       {/* RIGHT - Icons */}
       <View style={styles.right}>
+        <TouchableOpacity onPress={() => setShowLang(true)} style={styles.langBtn}>
+          <Text style={styles.langText}>{currentFlag}</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity>
           <Ionicons name="search-outline" size={22} color="#000" />
         </TouchableOpacity>
@@ -37,6 +47,9 @@ export default function Navbar() {
 
         {/* user panel modal */}
         {showPanel ? <UserPanel visible={showPanel} onClose={() => setShowPanel(false)} /> : null}
+
+        {/* language modal */}
+        {showLang ? <LanguageSwitcher visible={showLang} onClose={() => setShowLang(false)} /> : null}
       </View>
     </View>
   )
@@ -70,7 +83,18 @@ const styles = StyleSheet.create({
   right: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 18,
+    gap: 12,
+  },
+
+  langBtn: {
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    marginRight: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  langText: {
+    fontSize: 18,
   },
 
   avatar: {
