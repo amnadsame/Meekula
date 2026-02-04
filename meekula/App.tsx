@@ -1,6 +1,6 @@
 import React from 'react'
 import { StatusBar } from 'expo-status-bar'
-import LoginScreen from './src/screens/LoginScreen'
+import SignInScreen from './src/screens/auth/SignIn'
 import HomeScreen from './src/screens/HomeScreen'
 import { AuthProvider, useAuth } from './src/services/auth'
 
@@ -9,7 +9,7 @@ function Root() {
 
   if (loading) return null
 
-  return isAuthenticated ? <HomeScreen /> : <LoginScreen />
+  return isAuthenticated ? <HomeScreen /> : <SignInScreen />
 }
 
 export default function App() {
