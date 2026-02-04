@@ -1,4 +1,4 @@
-import create from 'zustand'
+import { create } from 'zustand'
 import { appService } from '../services/appService'
 
 type PopupMessage = { display: boolean; type?: string; content?: string }

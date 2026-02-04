@@ -16,6 +16,7 @@ import { useTranslation } from '../../utils/i18n'
 import LanguageSwitcher from '../../components/LanguageSwitcher'
 import { useAuth } from '../../services/auth'
 import LoadingOverlay from '../../components/LoadingOverlay'
+import ForgotPassword from './ForgotPassword'
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
@@ -102,9 +103,9 @@ export default function LoginScreen() {
       </View>
 
       {/* FORGOT */}
-      <TouchableOpacity style={styles.forgot}>
-        <Text style={styles.forgotText}>{ t('Quên mật khẩu?') }</Text>
-      </TouchableOpacity>
+      <View style={styles.forgot}>
+        <ForgotPassword />
+      </View>
 
       {/* LOGIN BUTTON */}
       <TouchableOpacity
